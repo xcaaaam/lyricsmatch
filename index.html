@@ -110,31 +110,27 @@
             background: #111;
             border-radius: 12px;
             padding: 30px;
-            display: flex;
-            align-items: center;
             margin-bottom: 20px;
             border-left: 5px solid var(--accent);
-        }
-        
-        .song-info {
-            margin-left: 30px;
         }
         
         .song-title {
             font-size: 24px;
             font-weight: bold;
-            margin: 0;
+            margin: 0 0 5px 0;
             color: var(--light-text);
         }
         
         .song-artist {
             color: var(--secondary-text);
-            margin: 5px 0;
+            margin: 0 0 20px 0;
         }
         
-        .song-description {
-            margin-top: 10px;
+        .song-lyrics {
+            margin-top: 20px;
             color: var(--secondary-text);
+            white-space: pre-line;
+            line-height: 1.8;
         }
         
         .city-selector {
@@ -191,19 +187,14 @@
             text-transform: uppercase;
         }
         
+        .signature {
+            margin-top: 30px;
+            font-style: italic;
+        }
+        
         @media (max-width: 768px) {
             h1 {
                 font-size: 60px;
-            }
-            
-            .song-card {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .song-info {
-                margin-left: 0;
-                margin-top: 20px;
             }
             
             .stats {
@@ -229,19 +220,8 @@
             <div class="result-section" id="resultSection">
                 <h2 class="section-title">THIS SONG EXPLAINS HOW YOU FEEL:</h2>
                 
-                <div class="song-card">
-                    <div class="song-cover">
-                        <img src="https://via.placeholder.com/150" alt="Album cover" style="border: 2px solid var(--accent);">
-                    </div>
-                    <div class="song-info">
-                        <h3 class="song-title">Song Title</h3>
-                        <p class="song-artist">Artist Name</p>
-                        <p class="song-description">This song perfectly captures the mix of emotions you described. The lyrics talk about...</p>
-                        <audio controls style="margin-top: 15px; width: 100%;">
-                            <source src="#" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
-                    </div>
+                <div class="song-card" id="songResult">
+                    <!-- Song results will appear here -->
                 </div>
             </div>
             
@@ -268,22 +248,144 @@
                     <div class="stat-label">Users</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" id="playCount">0</div>
-                    <div class="stat-label">Plays</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" id="womenCount">0</div>
-                    <div class="stat-label">By Women</div>
+                    <div class="stat-number" id="matchesCount">0</div>
+                    <div class="stat-label">Matches</div>
                 </div>
             </div>
+            <div class="signature">a product of <i>Seven Sides</i>. By @xcaaaam</div>
         </footer>
     </div>
     
     <script>
-        // Animated counters
+        // Spotify API integration
+        const CLIENT_ID = 'YOUR_SPOTIFY_CLIENT_ID';
+        const CLIENT_SECRET = 'YOUR_SPOTIFY_CLIENT_SECRET';
+        let accessToken = '';
+        let matchesCount = 0;
+        
+        // Function to get Spotify access token
+        async function getAccessToken() {
+            const response = await fetch('https://accounts.spotify.com/api/token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Basic ' + btoa(CLIENT_ID + ':' + CLIENT_SECRET)
+                },
+                body: 'grant_type=client_credentials'
+            });
+            
+            const data = await response.json();
+            return data.access_token;
+        }
+        
+        // Function to search for tracks based on emotional input
+        async function searchTracksByEmotion(emotion) {
+            if (!accessToken) {
+                accessToken = await getAccessToken();
+            }
+            
+            // This is a simplified approach - in a real app you'd need a more sophisticated
+            // way to map emotions to search queries
+            const query = emotion + ' lyrics';
+            
+            const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=5`, {
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken
+                }
+            });
+            
+            const data = await response.json();
+            return data.tracks.items;
+        }
+        
+        // Function to get lyrics (using a mock since Spotify doesn't provide lyrics)
+        async function getLyrics(songTitle, artist) {
+            // In a real implementation, you would use a lyrics API like Genius or Musixmatch
+            // This is a mock implementation for demonstration
+            
+            const mockLyrics = {
+                "happy": `[Verse 1]
+Because I'm happy
+Clap along if you feel like a room without a roof
+Because I'm happy
+Clap along if you feel like happiness is the truth`,
+                "sad": `[Verse 1]
+Hello darkness, my old friend
+I've come to talk with you again
+Because a vision softly creeping
+Left its seeds while I was sleeping`,
+                "angry": `[Verse 1]
+I'm not gonna take it
+No, I ain't gonna take it
+I'm not gonna take it anymore`,
+                "love": `[Verse 1]
+I will always love you
+I will always love you
+You, my darling you`,
+                "default": `[Verse 1]
+These are the lyrics that match your feelings
+Line by line, word by word
+They tell the story of your emotion
+Better than any other could`
+            };
+            
+            const emotion = document.querySelector('.emotion-input').value.toLowerCase();
+            
+            if (emotion.includes('happy')) {
+                return mockLyrics.happy;
+            } else if (emotion.includes('sad')) {
+                return mockLyrics.sad;
+            } else if (emotion.includes('angry')) {
+                return mockLyrics.angry;
+            } else if (emotion.includes('love')) {
+                return mockLyrics.love;
+            } else {
+                return mockLyrics.default;
+            }
+        }
+        
+        // Show results when clicking the button
+        document.querySelector('.submit-btn').addEventListener('click', async function() {
+            const input = document.querySelector('.emotion-input').value.trim();
+            if (input === '') return;
+            
+            try {
+                const tracks = await searchTracksByEmotion(input);
+                if (tracks && tracks.length > 0) {
+                    // Get the first track
+                    const track = tracks[0];
+                    const lyrics = await getLyrics(track.name, track.artists[0].name);
+                    
+                    // Display the result
+                    const songResult = document.getElementById('songResult');
+                    songResult.innerHTML = `
+                        <h3 class="song-title">${track.name}</h3>
+                        <p class="song-artist">${track.artists.map(artist => artist.name).join(', ')}</p>
+                        <div class="song-lyrics">${lyrics}</div>
+                    `;
+                    
+                    // Show the result section
+                    document.getElementById('resultSection').style.display = 'block';
+                    
+                    // Increment matches counter
+                    matchesCount++;
+                    document.getElementById('matchesCount').textContent = matchesCount;
+                    
+                    // Scroll to results
+                    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert('No songs found matching your emotion. Try different words.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error searching for songs. Please try again later.');
+            }
+        });
+        
+        // Animated counters for stats
         function animateCounters() {
-            const counters = document.querySelectorAll('.stat-number');
-            const targets = [1250, 826, 14250, 420];
+            const counters = document.querySelectorAll('#songCount, #userCount');
+            const targets = [1250, 826];
             const speed = 200;
             
             counters.forEach((counter, index) => {
@@ -304,22 +406,6 @@
                 updateCounter();
             });
         }
-        
-        // Show results when clicking the button
-        document.querySelector('.submit-btn').addEventListener('click', function() {
-            const input = document.querySelector('.emotion-input').value;
-            if (input.trim() !== '') {
-                document.getElementById('resultSection').style.display = 'block';
-                
-                // This would be replaced with actual API calls
-                document.querySelector('.song-title').textContent = "Example Song";
-                document.querySelector('.song-artist').textContent = "Example Artist";
-                document.querySelector('.song-description').textContent = "This song was selected because its lyrics and melody match what you expressed: '" + input + "'.";
-                
-                // Scroll to results
-                document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
-            }
-        });
         
         // Initialize counters when page loads
         window.addEventListener('load', animateCounters);
