@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hay una Canción que lo Explicaría</title>
+    <style>
+        :root {
+            --dark-bg: #121212;
+            --accent: #FF2D55;
+            --light-text: #FFFFFF;
+            --secondary-text: #B3B3B3;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        h1 {
+            font-size: 120px;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -3px;
+            background: linear-gradient(45deg, var(--accent), #FF9500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .tagline {
+            font-size: 24px;
+            color: var(--secondary-text);
+            margin-top: 10px;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 0;
+        }
+        
+        .input-section {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        
+        .emotion-input {
+            width: 100%;
+            padding: 20px;
+            font-size: 18px;
+            background: #222;
+            border: 2px solid #333;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .submit-btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 45, 85, 0.5);
+        }
+        
+        .result-section {
+            margin-top: 40px;
+            width: 100%;
+            max-width: 800px;
+            display: none;
+        }
+        
+        .song-card {
+            background: #1E1E1E;
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .song-info {
+            margin-left: 30px;
+        }
+        
+        .song-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .song-artist {
+            color: var(--secondary-text);
+            margin: 5px 0;
+        }
+        
+        .song-description {
+            margin-top: 10px;
+            color: var(--secondary-text);
+        }
+        
+        .city-selector {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .city-btn {
+            background: none;
+            border: 1px solid #333;
+            color: var(--secondary-text);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .city-btn:hover, .city-btn.active {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid #333;
+            margin-top: 60px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 60px;
+            }
+            
+            .song-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .song-info {
+                margin-left: 0;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>HAY UNA CANCIÓN</h1>
+            <div class="tagline">QUE LO EXPLICARÍA</div>
+        </header>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <input type="text" class="emotion-input" placeholder="¿Cómo te sientes hoy? Ej: 'Enojado con el mundo', 'Feliz como nunca', 'Melancólico por el pasado'...">
+                <button class="submit-btn">ENCONTRAR MI CANCIÓN</button>
+            </div>
+            
+            <div class="result-section" id="resultSection">
+                <h2>ESTA CANCIÓN EXPLICA CÓMO TE SIENTES:</h2>
+                
+                <div class="song-card">
+                    <div class="song-cover">
+                        <img src="https://via.placeholder.com/150" alt="Portada del álbum">
+                    </div>
+                    <div class="song-info">
+                        <h3 class="song-title">Título de la Canción</h3>
+                        <p class="song-artist">Artista</p>
+                        <p class="song-description">Esta canción captura perfectamente la mezcla de nostalgia y esperanza que describiste. La letra habla sobre...</p>
+                        <audio controls style="margin-top: 15px;">
+                            <source src="#" type="audio/mpeg">
+                            Tu navegador no soporta el elemento de audio.
+                        </audio>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="city-selector">
+                <button class="city-btn active">TODAS</button>
+                <button class="city-btn">MADRID</button>
+                <button class="city-btn">CIUDAD DE MÉXICO</button>
+                <button class="city-btn">BUENOS AIRES</button>
+                <button class="city-btn">SANTIAGO</button>
+                <button class="city-btn">BOGOTÁ</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>HAY UNA CANCIÓN QUE LO EXPLICARÍA ©2025</p>
+            <p>ROD: <span id="songCount">0</span> | NIKED: <span id="userCount">0</span> | POWER: <span id="playCount">0</span> | BY WOMEN: <span id="womenCount">0</span></p>
+        </footer>
+    </div>
+    
+    <script>
+        // Contadores animados
+        function animateCounters() {
+            const counters = document.querySelectorAll('#songCount, #userCount, #playCount, #womenCount');
+            const targets = [1250, 826, 14250, 420];
+            const speed = 200;
+            
+            counters.forEach((counter, index) => {
+                const target = targets[index];
+                const increment = target / speed;
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current);
+                        setTimeout(updateCounter, 1);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                
+                updateCounter();
+            });
+        }
+        
+        // Mostrar resultados al hacer clic en el botón
+        document.querySelector('.submit-btn').addEventListener('click', function() {
+            const input = document.querySelector('.emotion-input').value;
+            if (input.trim() !== '') {
+                document.getElementById('resultSection').style.display = 'block';
+                
+                // Aquí iría la lógica para buscar la canción adecuada
+                // Por ahora es solo un ejemplo
+                document.querySelector('.song-title').textContent = "Canción Ejemplo";
+                document.querySelector('.song-artist').textContent = "Artista Ejemplo";
+                document.querySelector('.song-description').textContent = "Esta canción fue seleccionada porque su letra y melodía coinciden con lo que expresaste: '" + input + "'.";
+                
+                // Scroll a los resultados
+                document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+        
+        // Iniciar contadores al cargar la página
+        window.addEventListener('load', animateCounters);
+        
+        // Cambiar ciudad seleccionada
+        document.querySelectorAll('.city-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.city-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
